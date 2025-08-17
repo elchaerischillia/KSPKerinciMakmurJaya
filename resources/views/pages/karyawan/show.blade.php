@@ -31,7 +31,15 @@
                             </tr>
                             <tr>
                                 <th>TANGGAL LAHIR</th>
-                                <td>{{ date('d-m-Y', strtotime($karyawan->detail_user->tgl_lahir)) ?? 'N/A' }}</td>
+                                <td>
+                                    {{ $karyawan->detail_user->tgl_lahir 
+                                        ? date('d-m-Y', strtotime($karyawan->detail_user->tgl_lahir)) 
+                                        : 'N/A' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>NO HP</th>
+                                <td>{{ $karyawan->detail_user->no_hp ?? 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <th>TANGGAL BERGABUNG</th>
@@ -73,7 +81,9 @@
             </div>
 
             <div class="box-footer">
-                <a href="{{ route('karyawan.index') }}" class="btn btn-default btn-flat"><i class="fa fa-arrow-left"></i> Kembali</a>
+                <a href="{{ route('karyawan.index') }}" class="btn btn-default btn-flat">
+                    <i class="fa fa-arrow-left"></i> Kembali
+                </a>
             </div>
         </div>
     </section>

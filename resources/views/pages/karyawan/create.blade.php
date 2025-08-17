@@ -19,6 +19,7 @@
             <!-- Form to add new employee -->
             <form action="{{ route('karyawan.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
+
                 <!-- Left Column for employee details -->
                 <div class="col-md-6">
                     <div class="box box-primary">
@@ -26,6 +27,7 @@
                             <h3 class="box-title">TAMBAH DATA KARYAWAN</h3>
                         </div>
                         <div class="box-body">
+
                             <!-- Full Name -->
                             <div class="form-group">
                                 <label for="nama_lengkap">NAMA LENGKAP <span class="text-red">*</span></label>
@@ -35,7 +37,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Birthplace -->
+                            <!-- Tempat Lahir -->
                             <div class="form-group">
                                 <label for="tmpt_lahir">TEMPAT LAHIR <span class="text-red">*</span></label>
                                 <input type="text" class="form-control" name="tmpt_lahir" value="{{ old('tmpt_lahir') }}">
@@ -44,7 +46,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Birth Date -->
+                            <!-- Tanggal Lahir -->
                             <div class="form-group">
                                 <label for="tgl_lahir">TANGGAL LAHIR <span class="text-red">*</span></label>
                                 <input type="date" class="form-control" name="tgl_lahir" value="{{ old('tgl_lahir') }}">
@@ -66,7 +68,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Phone Number -->
+                            <!-- Nomor HP -->
                             <div class="form-group">
                                 <label for="no_hp">NO TELEPON / WA <span class="text-red">*</span></label>
                                 <input type="text" class="form-control" name="no_hp" value="{{ old('no_hp') }}">
@@ -75,7 +77,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Address -->
+                            <!-- Alamat -->
                             <div class="form-group">
                                 <label for="alamat">ALAMAT LENGKAP <span class="text-red">*</span></label>
                                 <textarea class="form-control" name="alamat" rows="3">{{ old('alamat') }}</textarea>
@@ -84,7 +86,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Photo Upload -->
+                            <!-- Foto -->
                             <div class="form-group">
                                 <label for="foto">FOTO</label>
                                 <input type="file" class="form-control" name="foto" accept="image/jpeg, image/png">
@@ -93,6 +95,7 @@
                                     <span class="help-block text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -104,6 +107,7 @@
                             <h3 class="box-title">HAK AKSES</h3>
                         </div>
                         <div class="box-body">
+
                             <!-- Username -->
                             <div class="form-group">
                                 <label for="username">USERNAME <span class="text-red">*</span></label>
@@ -126,6 +130,7 @@
                                     <span class="help-block text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
+
                         </div>
                         <!-- /.box-body -->
 

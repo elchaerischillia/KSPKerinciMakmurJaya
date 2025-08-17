@@ -100,68 +100,64 @@ class KaryawanController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
         $karyawan = User::with('detail_user')->findOrFail($id); // Mengambil data user beserta detail user
         return view('pages.karyawan.edit', compact('karyawan'));
     }
-
+    
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        $request->validate([
-            'nama_lengkap'  => 'required|max:255',
-            'username'      => 'required|string|max:20|unique:users,username,' . $id,
-            'password'      => 'nullable|string|min:6',
-            'role'          => 'required|in:Manager,Teller,Collector',
-            'foto'          => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'tmpt_lahir'    => 'required|max:255',
-            'tgl_lahir'     => 'required|date',
-            'jk'            => 'required|in:Laki-laki,Perempuan',
-            'no_hp'         => 'required|max:14|unique:detail_user,no_hp,' . $id,
-            'alamat'        => 'required|max:1000',
-            'status'        => 'required|boolean', // Ensure 'status' is required only if needed
-        ]);
+   public function update(Request $request, string $id)
+{
+    $karyawan = User::with('detail_user')->findOrFail($id);
 
-        $karyawan = User::with('detail_user')->findOrFail($id); // Mengambil data user beserta detail user
+    $request->validate([
+        'nama_lengkap'  => 'required|max:255',
+        'username'      => 'required|string|max:20|unique:users,username,' . $id,
+        'password'      => 'nullable|string|min:6',
+        'role'          => 'required|in:Manager,Teller,Collector',
+        'foto'          => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'tmpt_lahir'    => 'required|max:255',
+        'tgl_lahir'     => 'required|date',
+        'jk'            => 'required|in:Laki-laki,Perempuan',
+        'no_hp'         => 'required|max:14|unique:detail_user,no_hp,' . $karyawan->detail_user->id,
+        'alamat'        => 'required|max:1000',
+        // 'status' => 'required|boolean', // hapus kalau tidak ada di form
+    ]);
 
-        // Update file foto jika ada
-        if ($request->hasFile('foto')) {
-            // Hapus file lama jika ada
-            if ($karyawan->detail_user->foto && Storage::exists('public/' . $karyawan->detail_user->detail_user->foto)) {
-                Storage::delete('public/' . $karyawan->detail_user->foto);
-            }
-
-            // Simpan file baru
-            $fotoPath = $request->file('foto')->store('assets/file-karyawan', 'public');
-            $karyawan->detail_user->foto = $fotoPath;
+    // Update foto
+    if ($request->hasFile('foto')) {
+        if ($karyawan->detail_user->foto && Storage::exists('public/' . $karyawan->detail_user->foto)) {
+            Storage::delete('public/' . $karyawan->detail_user->foto);
         }
-
-        // Update data karyawan
-        $karyawan->update([
-            'nama_lengkap'  => $request->nama_lengkap,
-            'username'      => $request->username,
-            'password'      => $request->password ? Hash::make($request->password) : $karyawan->password,
-            'role'          => $request->role,
-        ]);
-
-        // Update data detail user
-        $karyawan->detail_user->update([
-            'tmpt_lahir'    => $request->tmpt_lahir,
-            'tgl_lahir'     => $request->tgl_lahir,
-            'jk'            => $request->jk,
-            'no_hp'         => $request->no_hp,
-            'alamat'        => $request->alamat,
-            'status'        => $request->status, // You may want to make sure this is needed
-        ]);
-
-        // Redirect back with a success message
-        return redirect()->route('karyawan.index')->with('success', 'Data karyawan berhasil diperbarui.');
+        $fotoPath = $request->file('foto')->store('assets/file-karyawan', 'public');
+        $karyawan->detail_user->foto = $fotoPath;
     }
 
+    // Update user
+    $karyawan->update([
+        'nama_lengkap' => $request->nama_lengkap,
+        'username'     => $request->username,
+        'password'     => $request->password ? Hash::make($request->password) : $karyawan->password,
+        'role'         => $request->role,
+    ]);
+
+    // Update detail user
+    $karyawan->detail_user->update([
+        'tmpt_lahir' => $request->tmpt_lahir,
+        'tgl_lahir'  => $request->tgl_lahir,
+        'jk'         => $request->jk,
+        'no_hp'      => $request->no_hp,
+        'alamat'     => $request->alamat,
+        // 'status'   => $request->status ?? true,
+        'foto'       => $karyawan->detail_user->foto,
+    ]);
+
+    return redirect()->route('karyawan.index')->with('success', 'Data karyawan berhasil diperbarui.');
+}
 
     /**
      * Remove the specified resource from storage.

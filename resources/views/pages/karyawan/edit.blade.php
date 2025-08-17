@@ -41,7 +41,7 @@
                             <!-- Tempat Lahir -->
                             <div class="form-group">
                                 <label for="tmpt_lahir">TEMPAT LAHIR <span class="text-red">*</span></label>
-                                <input type="text" class="form-control" name="tmpt_lahir" value="{{ old('tmpt_lahir', $karyawan->tmpt_lahir) }}">
+                                <input type="text" class="form-control" name="tmpt_lahir" value="{{ old('tmpt_lahir', $karyawan->detail_user->tmpt_lahir ?? '') }}">
                                 @error('tmpt_lahir')
                                     <span class="help-block text-danger">{{ $message }}</span>
                                 @enderror
@@ -50,7 +50,7 @@
                             <!-- Tanggal Lahir -->
                             <div class="form-group">
                                 <label for="tgl_lahir">TANGGAL LAHIR <span class="text-red">*</span></label>
-                                <input type="date" class="form-control" name="tgl_lahir" value="{{ old('tgl_lahir', $karyawan->tgl_lahir) }}">
+                                <input type="date" class="form-control" name="tgl_lahir" value="{{ old('tgl_lahir', $karyawan->detail_user->tgl_lahir ?? '') }}">
                                 @error('tgl_lahir')
                                     <span class="help-block text-danger">{{ $message }}</span>
                                 @enderror
@@ -61,8 +61,8 @@
                                 <label for="jk">GENDER <span class="text-red">*</span></label>
                                 <select class="form-control select2" name="jk">
                                     <option value="" disabled>-- PILIH GENDER --</option>
-                                    <option value="Laki-laki" {{ old('jk', $karyawan->jk) == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                                    <option value="Perempuan" {{ old('jk', $karyawan->jk) == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                                    <option value="Laki-laki" {{ old('jk', $karyawan->detail_user->jk ?? '') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                                    <option value="Perempuan" {{ old('jk', $karyawan->detail_user->jk ?? '') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
                                 </select>
                                 @error('jk')
                                     <span class="help-block text-danger">{{ $message }}</span>
@@ -72,7 +72,7 @@
                             <!-- Nomor HP -->
                             <div class="form-group">
                                 <label for="no_hp">NO TELEPON / WA <span class="text-red">*</span></label>
-                                <input type="text" class="form-control" name="no_hp" value="{{ old('no_hp', $karyawan->no_hp) }}">
+                                <input type="text" class="form-control" name="no_hp" value="{{ old('no_hp', $karyawan->detail_user->no_hp ?? '') }}">
                                 @error('no_hp')
                                     <span class="help-block text-danger">{{ $message }}</span>
                                 @enderror
@@ -81,7 +81,7 @@
                             <!-- Alamat -->
                             <div class="form-group">
                                 <label for="alamat">ALAMAT LENGKAP <span class="text-red">*</span></label>
-                                <textarea class="form-control" name="alamat" rows="3">{{ old('alamat', $karyawan->alamat) }}</textarea>
+                                <textarea class="form-control" name="alamat" rows="3">{{ old('alamat', $karyawan->detail_user->alamat ?? '') }}</textarea>
                                 @error('alamat')
                                     <span class="help-block text-danger">{{ $message }}</span>
                                 @enderror
@@ -92,8 +92,8 @@
                                 <label for="foto">FOTO</label>
                                 <input type="file" class="form-control" name="foto" accept="image/jpeg, image/png">
                                 <small class="text-muted">Biarkan kosong jika tidak ingin mengganti.</small>
-                                @if ($karyawan->foto)
-                                    <br><img src="{{ asset('storage/' . $karyawan->foto) }}" alt="Foto" width="100">
+                                @if ($karyawan->detail_user && $karyawan->detail_user->foto)
+                                    <br><img src="{{ asset('storage/' . $karyawan->detail_user->foto) }}" alt="Foto" width="100">
                                 @endif
                                 @error('foto')
                                     <span class="help-block text-danger">{{ $message }}</span>
