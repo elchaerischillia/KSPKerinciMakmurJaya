@@ -11,15 +11,24 @@ class AngsuranController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $angsuran = Angsuran::with('pinjaman')
-                            ->where('status', 'Terlambat')
-                            ->orderBy('created_at', 'desc')
-                            ->get();
+public function index()
+{
+    $angsuran = Angsuran::with('pinjaman.kategori_angsuran')
+                        ->where('status', 'Terlambat')
+                        ->orderBy('created_at', 'desc')
+                        ->get()
+                        ->map(function ($item) {
+                            // ambil cicilan per bulan langsung dari kategori angsuran
+                            $item->cicilan = $item->pinjaman->kategori_angsuran->nominal ?? 0;
+                            return $item;
+                        });
 
-        return view('pages.angsuran.angsuran-bermasalah', compact('angsuran'));
-    }
+    return view('pages.angsuran.angsuran-bermasalah', compact('angsuran'));
+}
+
+
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -71,4 +80,6 @@ class AngsuranController extends Controller
     {
         //
     }
+
+    
 }

@@ -72,14 +72,26 @@
                     </tr>
                     <tr>
                         <td><b>BUKTI ANGUNAN</b></td>
-                        <td>
-                            @if ($pinjaman->bukti_angunan)
-                                <img src="{{ asset('storage/' . $pinjaman->bukti_angunan) }}" alt="Foto Anggota"
-                                    class="img-thumbnail" width="50px">
-                            @else
-                                <p>Tidak ada foto</p>
-                            @endif
-                        </td>
+<td>
+    @if ($pinjaman->bukti_angunan)
+        @php
+            $ext = pathinfo($pinjaman->bukti_angunan, PATHINFO_EXTENSION);
+        @endphp
+
+        @if (strtolower($ext) === 'pdf')
+            <iframe src="{{ asset('storage/' . $pinjaman->bukti_angunan) }}" width="100%" height="400px"></iframe>
+            <a href="{{ asset('storage/' . $pinjaman->bukti_angunan) }}" target="_blank" class="btn btn-sm btn-primary mt-2">
+                Lihat / Download PDF
+            </a>
+        @else
+            <img src="{{ asset('storage/' . $pinjaman->bukti_angunan) }}" alt="Bukti Angunan"
+                class="img-thumbnail" width="200px">
+        @endif
+    @else
+        <p>Tidak ada bukti angunan</p>
+    @endif
+</td>
+
                     </tr>
                     <tr>
                         <td><b>TANGGAL PINJAM</b></td>

@@ -20,6 +20,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Backsite\KategoriAngsuranController;
 use App\Http\Controllers\Backsite\KategoriPinjamanController;
 use App\Http\Controllers\Backsite\KategoriSimpananController;
+use App\Http\Controllers\Backsite\AngsuranTerlambatWebController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -130,4 +133,10 @@ Route::middleware(['auth'])->group(function () {
       Route::get('/laporan/angsuran/cetak', [LaporanController::class, 'cetakLaporanAngsuran'])->name('laporan.angsuran.cetak');
       // Route untuk mencetak laporan dalam bentuk PDF
       Route::get('/laporan/angsuran/cetak-pdf', [LaporanController::class, 'cetakLaporanAngsuranPdf'])->name('laporan.angsuran.cetak-pdf');
-});
+
+
+
+Route::post('/angsuran/{id}/notify', [AngsuranTerlambatWebController::class, 'notify'])
+    ->name('angsuran.notify');
+
+}); 

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('kategori_pinjaman', function (Blueprint $table) {
             $table->id();
             $table->string('nama_kategori');
+            $table->unsignedBigInteger('jumlah_pinjaman')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

@@ -23,8 +23,9 @@ class Angsuran extends Model
         'pinjaman_id',
         'tgl_jatuh_tempo',
         'status',
+    
     ];
-
+    
     public function pinjaman()
     {
         return $this->belongsTo(Pinjaman::class, 'pinjaman_id','id');
@@ -34,4 +35,10 @@ class Angsuran extends Model
     {
         return $this->hasMany(Pembayaran::class, 'angsuran_id');
     }
+
+    public function anggota()
+    {
+        return $this->belongsTo(Anggota::class, 'anggota_id', 'id');
+    }
 }
+

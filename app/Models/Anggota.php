@@ -42,4 +42,9 @@ class Anggota extends Model
     {
         return $this->hasMany(Pinjaman::class, 'anggota_id');
     }
+
+     public function angsuran()
+    {
+        return $this->hasMany(Angsuran::class, 'anggota_id', 'id');
+    }
 }

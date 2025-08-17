@@ -53,12 +53,13 @@ class AnggotaController extends Controller
             'foto'         => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ], [
             'required' => ':attribute harus diisi.',
-            'max'      => ':attribute maksimal :max karakter.',
+            'max'      => ':attribute maksimal :max characters.',
             'unique'   => ':attribute sudah ada di database.',
             'in'       => ':attribute harus Laki-laki atau Perempuan.',
             'image'    => ':attribute harus berupa gambar.',
             'mimes'    => ':attribute harus berupa gambar dengan ekstensi jpeg, png, atau jpg.',
             'date'     => ':attribute harus berupa tanggal.',
+            'nik'      => ':attribute harus berupa angka.',
         ]);
 
 

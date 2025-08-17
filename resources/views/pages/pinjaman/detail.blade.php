@@ -137,23 +137,41 @@
                         <h3 class="box-title">BUKTI ANGUNAN</span> </h3>
                     </div>
                     <!-- /.box-header -->
-                    <div class="box-body">
-                        <table class="table table-bordered table-striped">
-                            <tr>
-                                <th>{{ $pinjaman->angunan }}</th>
-                            </tr>
-                            <tr>
-                                <td colspan="2" class="text-center">
-                                    @if ($pinjaman->bukti_angunan)
-                                        <img src="{{ asset('storage/' . $pinjaman->bukti_angunan) }}" alt="Foto Anggota"
-                                            class="img-thumbnail" width="100px">
-                                    @else
-                                        <p>Tidak ada foto</p>
-                                    @endif
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
+                   <div class="box-body">
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th>{{ $pinjaman->angunan }}</th>
+        </tr>
+        <tr>
+            <td colspan="2" class="text-center">
+                @if ($pinjaman->bukti_angunan)
+                    @php
+                        $fileUrl = asset('storage/' . $pinjaman->bukti_angunan);
+                        $ext = strtolower(pathinfo($pinjaman->bukti_angunan, PATHINFO_EXTENSION));
+                    @endphp
+
+                    @if(in_array($ext, ['jpg','jpeg','png']))
+                        <img src="{{ $fileUrl }}" alt="Bukti Angunan" class="img-thumbnail" width="200px">
+                    @elseif($ext === 'pdf')
+                        <embed src="{{ $fileUrl }}" type="application/pdf" width="100%" height="500px" />
+                    @elseif(in_array($ext, ['doc','docx']))
+                        <a href="https://view.officeapps.live.com/op/view.aspx?src={{ urlencode($fileUrl) }}"
+                           target="_blank" class="btn btn-primary">
+                            Lihat Dokumen Word
+                        </a>
+                    @else
+                        <a href="{{ $fileUrl }}" target="_blank" class="btn btn-secondary">
+                            Download File
+                        </a>
+                    @endif
+                @else
+                    <p>Tidak ada file angunan</p>
+                @endif
+            </td>
+        </tr>
+    </table>
+</div>
+
                 </div>
             </div>
         </div>

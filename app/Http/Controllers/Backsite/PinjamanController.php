@@ -56,7 +56,7 @@ class PinjamanController extends Controller
             'kategori_pinjaman_id' => 'required|integer|exists:kategori_pinjaman,id',
             'tanggal_pinjam' => 'required|date',
             'angunan' => 'required|string',
-            'bukti_angunan' => 'required|mimes:jpeg,png,jpg|max:2048',
+            'bukti_angunan' => 'required|mimes:jpeg,png,jpg,docx,pdf|max:2048',
         ]);
 
          // Pastikan direktori penyimpanan ada
@@ -122,7 +122,7 @@ class PinjamanController extends Controller
             'kategori_pinjaman_id' => 'required|integer|exists:kategori_pinjaman,id',
             'tanggal_pinjam' => 'required|date',
             'angunan' => 'required|string',
-            'bukti_angunan' => 'nullable|mimes:jpeg,png,jpg|max:2048',
+            'bukti_angunan' => 'nullable|mimes:jpeg,png,jpg,doc,pdf|max:5098',
         ]);
 
         // Find the Pinjaman record by ID
@@ -299,18 +299,43 @@ class PinjamanController extends Controller
 
 
 
-    // mendowload bukti pembayaran
-    public function downloadBukti($id)
-    {
-        $mpdf = new \Mpdf\Mpdf();
-        $angsuran = Angsuran::findOrFail($id);
-        $pembayaran = $angsuran->pembayaran->first();
-        $nomorTransaksi = $pembayaran->kode_trans ?? 'bukti-pembayaran'; // Default jika kode_trans null
-        $filename = 'bukti-pembayaran-' . $nomorTransaksi . '.pdf';
-        $mpdf->WriteHTML(view('pages.pinjaman.bukti-pembayaran', compact('angsuran', 'pembayaran')));
-        $mpdf->Output($filename,'D');
+// mendownload bukti pembayaran
+public function downloadBukti($id)
+{
+    $angsuran = Angsuran::findOrFail($id);
+    $pembayaran = $angsuran->pembayaran->first();
 
+    if (!$pembayaran) {
+        return redirect()->back()->with('error', 'Data pembayaran tidak ditemukan.');
     }
+
+    // Hitung angsuran keberapa
+    $angsuranKe = Angsuran::where('pinjaman_id', $angsuran->pinjaman_id)
+        ->where('id', '<=', $angsuran->id)
+        ->count();
+
+    $totalAngsuran = $angsuran->pinjaman->kategori_angsuran->bulan ?? 0;
+
+    $nomorTransaksi = $pembayaran->kode_trans ?? 'bukti-pembayaran';
+    $filename = 'bukti-pembayaran-' . $nomorTransaksi . '.pdf';
+
+    // Setting mPDF ukuran struk
+    $mpdf = new \Mpdf\Mpdf([
+        'mode' => 'utf-8',
+        'format' => [110, 215], // Lebar 80mm, tinggi cukup agar 1 lembar
+        'margin_left' => 2,
+        'margin_right' => 2,
+        'margin_top' => 2,
+        'margin_bottom' => 2
+    ]);
+
+    // Render HTML struk
+    $html = view('pages.pinjaman.bukti-pembayaran', compact('angsuran', 'pembayaran', 'angsuranKe', 'totalAngsuran'))->render();
+
+    $mpdf->WriteHTML($html);
+    $mpdf->Output($filename, 'D');
+}
+
 
 
     // mengambil data kategori angsuran berdasarkan besar pinjaman yang dinputkan

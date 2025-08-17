@@ -33,16 +33,18 @@ class KategoriPinjamanController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nama_kategori' => 'required|max:255|unique:kategori_pinjaman,nama_kategori',
-        ]);
+   public function store(Request $request)
+{
+    $request->validate([
+        'nama_kategori' => 'required|max:255|unique:kategori_pinjaman,nama_kategori',
+        'jumlah_pinjaman' => 'required|numeric|min:100000',
+    ]);
 
-        KategoriPinjaman::create($request->all());
+    KategoriPinjaman::create($request->only('nama_kategori', 'jumlah_pinjaman'));
 
-        return redirect()->route('kategori-pinjaman.index')->with('success', 'Data Kategori Pinjaman berhasil ditambahkan.');
-    }
+    return redirect()->route('kategori-pinjaman.index')->with('success', 'Data Kategori Pinjaman berhasil ditambahkan.');
+}
+
 
     /**
      * Display the specified resource.
@@ -63,17 +65,18 @@ class KategoriPinjamanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        $request->validate([
-            'nama_kategori' => 'required|max:255|unique:kategori_pinjaman,nama_kategori,' . $id,
-        ]);
+   public function update(Request $request, string $id)
+{
+    $request->validate([
+        'nama_kategori' => 'required|max:255|unique:kategori_pinjaman,nama_kategori,' . $id,
+        'jumlah_pinjaman' => 'required|numeric|min:100000',
+    ]);
 
-        $kategori_pinjaman = KategoriPinjaman::findOrFail($id);
-        $kategori_pinjaman->update($request->all());
+    $kategori_pinjaman = KategoriPinjaman::findOrFail($id);
+    $kategori_pinjaman->update($request->only('nama_kategori', 'jumlah_pinjaman'));
 
-        return redirect()->route('kategori-pinjaman.index')->with('success', 'Data Kategori Pinjaman berhasil diperbarui.');
-    }
+    return redirect()->route('kategori-pinjaman.index')->with('success', 'Data Kategori Pinjaman berhasil diperbarui.');
+}
 
     /**
      * Remove the specified resource from storage.

@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\v1\AngsuranTerlambatController;
-
+use App\Http\Controllers\NotifikasiController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -17,3 +17,8 @@ use App\Http\Controllers\API\v1\AngsuranTerlambatController;
 
 Route::get('/angsuran', [AngsuranTerlambatController::class, 'index']);
 Route::get('/angsuran/{id}', [AngsuranTerlambatController::class,'show']);
+
+Route::get('/angsuran-bermasalah', [AngsuranTerlambatController::class, 'index']);
+Route::get('/angsuran-bermasalah/{id}', [AngsuranTerlambatController::class, 'show']);
+
+Route::post('/angsuran-bermasalah/{id}/notify', [AngsuranTerlambatController::class, 'notify']);

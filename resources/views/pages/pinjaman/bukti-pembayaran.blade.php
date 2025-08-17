@@ -109,29 +109,34 @@
             <p>Tanggal: {{ date('d-m-Y', strtotime($pembayaran->created_at)) ?? '-' }}</p>
         </div>
 
-        <div class="info">
-            <div>
-                <span>Teller:</span>
-                <span>{{ $pembayaran->user->nama_lengkap ?? '-' }}</span>
-            </div>
-            <div>
-                <span>Nama:</span>
-                <span>{{ $angsuran->pinjaman->anggota->nama_lengkap ?? '-' }}</span>
-            </div>
-            <div>
-                <span>Kategori Pinjaman:</span>
-                <span>{{ $angsuran->pinjaman->kategori_pinjaman->nama_kategori ?? '-' }}</span>
-            </div>
-            <div>
-                <span>Durasi Angsuran:</span>
-                <span>{{ $angsuran->pinjaman->kategori_angsuran->bulan ?? '-' }} Bulan</span>
-            </div>
-            <div>
-                <span>Keterangan:</span>
-                <span>{{ $pembayaran->keterangan ?? '-' }}</span>
-            </div>
-        </div>
+       <div class="info">
+    <div>
+        <span>Teller:</span>
+        <span>{{ $pembayaran->user->nama_lengkap ?? '-' }}</span>
+    </div>
+    <div>
+        <span>Nama:</span>
+        <span>{{ $angsuran->pinjaman->anggota->nama_lengkap ?? '-' }}</span>
+    </div>
+    <div>
+        <span>Kategori Pinjaman:</span>
+        <span>{{ $angsuran->pinjaman->kategori_pinjaman->nama_kategori ?? '-' }}</span>
+    </div>
+    <div>
+        <span>Durasi Angsuran:</span>
+        <span>{{ $angsuran->pinjaman->kategori_angsuran->bulan ?? '-' }} Bulan</span>
+    </div>
+    <div>
+        <span>Pembayaran ke:</span>
+        <span>{{ $angsuranKe }} dari {{ $totalAngsuran }} kali Angsuran</span>
+    </div>
+    <div>
+        <span>Keterangan:</span>
+        <span>{{ $pembayaran->keterangan ?? '-' }}</span>
+    </div>
+</div>
 
+        
         <div class="divider"></div>
 
         <table class="table">

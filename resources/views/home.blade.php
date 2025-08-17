@@ -54,7 +54,7 @@
     <div class="container">
         <div class="text-center mb-5">
             <h6 class="text-primary text-uppercase">Galeri</h6>
-            <h2>Galeri Kegiatan</h2>
+            <h2>Galeri Koperasi</h2>
         </div>
         <div class="row">
             @forelse ($galeris as $item)
@@ -79,7 +79,7 @@
 <div id="faq" class="container-fluid py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <h6 class="text-primary text-uppercase">FAQ</h6>
+            <h6 class="text-primary text-uppercase">Frequently Asked Questions</h6>
             <h2>Pertanyaan yang Sering Diajukan</h2>
         </div>
         <div class="accordion" id="faqAccordion">

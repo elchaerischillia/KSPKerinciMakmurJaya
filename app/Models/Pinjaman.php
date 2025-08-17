@@ -54,4 +54,6 @@ class Pinjaman extends Model
     {
         return $this->hasMany(Angsuran::class, 'pinjaman_id');
     }
+
+    
 }

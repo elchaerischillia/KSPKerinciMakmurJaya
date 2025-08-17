@@ -21,6 +21,7 @@ class KategoriPinjaman extends Model
 
     protected $fillable = [
         'nama_kategori',
+        'jumlah_pinjaman',
         'created_at',
         'updated_at',
         'deleted_at',

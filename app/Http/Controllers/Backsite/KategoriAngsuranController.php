@@ -20,7 +20,6 @@ class KategoriAngsuranController extends Controller
     public function index()
     {
         $angsuran = KategoriAngsuran::with('kategori_pinjaman')->get();
-
         return view('pages.kategori-angsuran.index', compact('angsuran'));
     }
 
@@ -30,35 +29,38 @@ class KategoriAngsuranController extends Controller
     public function create()
     {
         $kategori_pinjaman = KategoriPinjaman::all();
-
         return view('pages.kategori-angsuran.create', compact('kategori_pinjaman'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $request->merge(['nominal' => str_replace(['Rp.', '.', ','], '', $request->nominal)]);
+ public function store(Request $request)
+{
+    $request->validate([
+        'kategori_pinjaman_id' => 'required|integer|exists:kategori_pinjaman,id',
+        'bulan' => 'required|integer|min:1',
+    ]);
 
-        $request->validate([
-            'kategori_pinjaman_id' => 'required|integer|exists:kategori_pinjaman,id',
-            'nominal' => 'required|integer',
-            'bulan' => 'required|integer|min:1',
-        ]);
+    $kategori = KategoriPinjaman::findOrFail($request->kategori_pinjaman_id);
+    $jumlah = $kategori->jumlah_pinjaman;
 
-        $total_bayar = $request->nominal * $request->bulan;
+    // Hitung bunga flat 3%
+    $bunga = $jumlah * 0.03 * $request->bulan;
+    $total_bayar = $jumlah + $bunga;
+    $nominal = ceil($total_bayar / $request->bulan);
+
+    KategoriAngsuran::create([
+        'kategori_pinjaman_id' => $request->kategori_pinjaman_id,
+        'bulan' => $request->bulan,
+        'nominal' => $nominal,
+        'total_bayar' => $total_bayar,
+    ]);
+
+    return redirect()->route('kategori-angsuran.index')->with('success', 'Kategori Angsuran berhasil disimpan.');
+}
 
 
-        KategoriAngsuran::create([
-            'kategori_pinjaman_id' => $request->kategori_pinjaman_id,
-            'bulan' => $request->bulan,
-            'nominal' => $request->nominal,
-            'total_bayar' => $total_bayar,
-        ]);
-
-        return redirect()->route('kategori-angsuran.index')->with('success', 'Data Kategori Angsuran berhasil ditambahkan.');
-    }
 
     /**
      * Display the specified resource.
@@ -75,7 +77,6 @@ class KategoriAngsuranController extends Controller
     {
         $kategoriAngsuran = KategoriAngsuran::findOrFail($id);
         $kategori_pinjaman = KategoriPinjaman::all();
-
         return view('pages.kategori-angsuran.edit', compact('kategoriAngsuran', 'kategori_pinjaman'));
     }
 
@@ -84,7 +85,9 @@ class KategoriAngsuranController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $request->merge(['nominal' => str_replace(['Rp.', '.', ','], '', $request->nominal)]);
+        $request->merge([
+            'nominal' => str_replace(['Rp.', '.', ','], '', $request->nominal)
+        ]);
 
         $request->validate([
             'kategori_pinjaman_id' => 'required|integer|exists:kategori_pinjaman,id',
@@ -102,10 +105,7 @@ class KategoriAngsuranController extends Controller
             'total_bayar' => $total_bayar,
         ]);
 
-
-
-
-        return redirect()->route('kategori-angsuran.index')->with('success', 'Data Kategori angsuran berhasil diperbarui.');
+        return redirect()->route('kategori-angsuran.index')->with('success', 'Data Kategori Angsuran berhasil diperbarui.');
     }
 
     /**
@@ -119,3 +119,4 @@ class KategoriAngsuranController extends Controller
         return redirect()->route('kategori-angsuran.index')->with('success', 'Data Kategori Angsuran berhasil dihapus.');
     }
 }
+

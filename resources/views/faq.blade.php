@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container py-5">
-        <h2 class="text-center mb-4">FAQ</h2>
+        <h2 class="text-center mb-4">Frequently Asked Questions</h2>
 
         <div class="faq-list mx-auto" style="max-width: 800px;">
             @forelse ($faqs as $faq)

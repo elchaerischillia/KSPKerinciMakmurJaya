@@ -9,14 +9,15 @@
             color:rgb(236, 232, 232) !important;
             min-height: 100vh;
         }
+        /* tulisan dashboard, masterdata, operational, laporan */
         .main-sidebar .sidebar a {
-            color:rgb(3, 7, 16) !important;
+            color:rgba(2, 1, 8, 1) !important;
         }
         .main-sidebar .sidebar a:hover {
-            background-color: #e0e0e0 !important; /* abu-abu lembut hover */
+            background-color: #ebeaefff !important; /* utk panah abu-abu lembut hover */
         }
         .main-sidebar .sidebar .active > a {
-            background-color: #e0e0e0 !important; /* abu-abu active */
+            background-color: #e0e0e0 !important; /* warna menu abu-abu active */
         }
         .user-panel > .image > img {
             border-radius: 50%;
@@ -30,11 +31,11 @@
         .main-header,
         .main-header .navbar,
         .main-header .logo {
-            background-color:rgb(255, 255, 255) !important; /* cream */
-            color:rgb(1, 18, 50) !important; /*kospin*/
+            background-color:rgb(255, 255, 255) !important; /* baground logo */
+            color:rgb(1, 18, 50) !important; /*tulisan ksp*/
         }
         .main-header .navbar a {
-            color:rgb(12, 12, 12) !important;
+            color:rgb(12, 12, 12) !important; 
         }
         .main-header .navbar a:hover {
             background-color:rgb(218, 218, 218) !important; /* hijau lebih gelap saat hover */
@@ -89,5 +90,6 @@
     @stack('before_script')
     @include('includes.backsite.script')
     @stack('after_script')
+    
 </body>
 </html>
