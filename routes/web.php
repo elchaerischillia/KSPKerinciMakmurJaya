@@ -22,7 +22,7 @@ use App\Http\Controllers\Backsite\KategoriPinjamanController;
 use App\Http\Controllers\Backsite\KategoriSimpananController;
 use App\Http\Controllers\Backsite\AngsuranTerlambatWebController;
 use App\Http\Controllers\Auth\TwoFactorController;
-
+use App\Http\Controllers\ActivityLogController;
 
 
 /*
@@ -82,6 +82,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/simpan/transaksi-simpan/{id}', [SimpanController::class, 'showTransaksiSimpan'])->name('simpan.transaksi_simpan');
     Route::put('/simpan/tambah-simpan/{id}', [SimpanController::class, 'simpanTransaksi'])->name('simpan.tambah_simpan');
     Route::put('/simpan/penarikan-simpan/{id}', [SimpanController::class, 'penarikanTransaksi'])->name('simpan.penarikan_simpan');
+    Route::delete('/simpan/{id}', [App\Http\Controllers\Backsite\SimpanController::class, 'destroy'])->name('simpan.destroy');
+
 
     // route kategori pinjaman
     Route::resource('/kategori-pinjaman', KategoriPinjamanController::class);
@@ -148,4 +150,8 @@ Route::middleware(['auth'])->group(function () {
 
     // kalau mau fitur resend OTP
     Route::post('/resend-otp', [TwoFactorController::class, 'resendOtp'])->name('resend.otp');
-}); 
+    //logactivity
+    Route::get('/log-activity', [LogActivityController::class, 'index'])->name('log-activity.index');
+
+
+  }); 

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\User;
+use App\Helpers\LogActivity;
 
 class LoginController extends Controller
 {
@@ -18,38 +19,35 @@ class LoginController extends Controller
 
     // proses login
     public function loginProses(Request $request)
-    {
-        $request->validate([
-            'username' => 'required|string',
-            'password' => 'required|string',
-        ]);
+{
+    $request->validate([
+        'username' => 'required|string',
+        'password' => 'required|string',
+    ]);
 
-        // cek username & password
-        if (Auth::attempt([
-            'username' => $request->username,
-            'password' => $request->password
-        ])) {
-            $user = Auth::user();
+    if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
+        $user = Auth::user();
 
-            // generate OTP random 6 digit
-            $otp = rand(100000, 999999);
+        // generate OTP random 6 digit
+        $otp = rand(100000, 999999);
 
-            // simpan OTP ke session (bisa juga ke DB user)
-            Session::put('otp', $otp);
-            Session::put('otp_user_id', $user->id);
+        // simpan OTP ke session
+        Session::put('otp', $otp);
+        Session::put('otp_user_id', $user->id);
 
-            // TODO: Kirim OTP via Email / WhatsApp
-            // sementara kita simpan ke log biar bisa dilihat
-            \Log::info("OTP untuk user {$user->username}: " . $otp);
+        // logging aktivitas
+        LogActivity::addToLog('Login', 'Auth', "User {$user->username} berhasil login, OTP dikirim.");
 
-            // redirect ke halaman verifikasi OTP
-            return redirect()->route('otp.verify');
-        }
+        // sementara tampilkan di log
+        \Log::info("OTP untuk user {$user->username}: " . $otp);
 
-        // kalau gagal login
-        return back()->with('error', 'Username atau Password salah!')
-                     ->withInput();
+        return redirect()->route('otp.verify');
     }
+
+    LogActivity::addToLog('Login Gagal', 'Auth', "Percobaan login gagal dengan username {$request->username}");
+    return back()->with('error', 'Username atau Password salah!')->withInput();
+}
+
 
     public function logout(Request $request)
     {

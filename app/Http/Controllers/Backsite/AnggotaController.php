@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\LogActivity;
 
 class AnggotaController extends Controller
 {
@@ -91,6 +92,16 @@ class AnggotaController extends Controller
             'status'       => true,
         ]);
 
+        
+        $anggota = Anggota::create($request->all());
+
+        // simpan log
+        LogActivity::addToLog(
+            'Tambah', 
+            'Anggota', 
+            'Menambahkan anggota baru dengan nama ' . $anggota->nama
+        );
+
 
         return redirect()->route('anggota.index')->with('success', 'Data anggota berhasil ditambahkan.');
     }
@@ -170,6 +181,15 @@ class AnggotaController extends Controller
             'status'       => $request->status,
         ]);
 
+         $anggota = Anggota::findOrFail($id);
+        $anggota->update($request->all());
+
+        LogActivity::addToLog(
+            'Edit',
+            'Anggota',
+            'Mengubah data anggota: ' . $anggota->nama
+        );
+
         return redirect()->route('anggota.index')->with('success', 'Data anggota berhasil diperbarui.');
     }
 
@@ -188,6 +208,16 @@ class AnggotaController extends Controller
 
         // Hapus data karyawan
         $anggota->forceDelete();
+
+         $anggota = Anggota::findOrFail($id);
+        $anggota->delete();
+
+        LogActivity::addToLog(
+            'Hapus',
+            'Anggota',
+            'Menghapus anggota: ' . $anggota->nama
+        );
+
 
         return redirect()->route('anggota.index')->with('success', 'Data anggota berhasil dihapus.');
     }

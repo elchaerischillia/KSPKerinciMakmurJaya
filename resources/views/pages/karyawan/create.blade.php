@@ -121,10 +121,14 @@
                             <div class="form-group">
                                 <label for="role">ROLE <span class="text-red">*</span></label>
                                 <select class="form-control select2" name="role">
-                                    <option value="" disabled selected>-- PILIH ROLE --</option>
-                                    <option value="Manager" {{ old('role') == 'Manager' ? 'selected' : '' }}>Manager</option>
-                                    <option value="Teller" {{ old('role') == 'Teller' ? 'selected' : '' }}>Teller</option>
-                                    <option value="Collector" {{ old('role') == 'Collector' ? 'selected' : '' }}>Debt Collector</option>
+                                    <select class="form-control select2" name="role">
+    <option value="" disabled selected>-- PILIH ROLE --</option>
+    <option value="Admin" {{ old('role') == 'Admin' ? 'selected' : '' }}>Admin</option>
+    <option value="Manager" {{ old('role') == 'Manager' ? 'selected' : '' }}>Manager</option>
+    <option value="Teller" {{ old('role') == 'Teller' ? 'selected' : '' }}>Teller</option>
+    <option value="Collector" {{ old('role') == 'Collector' ? 'selected' : '' }}>Debt Collector</option>
+</select>
+
                                 </select>
                                 @error('role')
                                     <span class="help-block text-danger">{{ $message }}</span>

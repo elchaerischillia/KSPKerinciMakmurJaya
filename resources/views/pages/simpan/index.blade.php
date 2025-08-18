@@ -67,13 +67,29 @@
                                 <td class="text-center">
                                     Rp. {{ number_format($simpanan_item->saldo_simpanan, 0, ',', '.') }}
                                 </td>
-                                <td class="text-center" width="15%">
-                                    {{-- <a href="{{ route('simpan.edit', $simpanan_item->id) }}"
-                                        class="btn btn-sm btn-warning btn-flat"><i class="fa fa-edit"></i> EDIT</a> --}}
+                                <td class="text-center" width="10%">
+    <!-- Tombol Transaksi -->
+    <a href="{{ route('simpan.transaksi_simpan', $simpanan_item->id) }}" 
+       class="btn btn-xs btn-primary btn-flat" 
+       title="Transaksi">
+        <i class="fa fa-usd"></i>
+    </a>
 
-                                    <a href="{{ route('simpan.transaksi_simpan', $simpanan_item->id) }}"
-                                        class="btn btn-sm btn-primary btn-flat"> <i class=" fa fa-usd"></i> TRANSAKSI</a>
-                                </td>
+    <!-- Tombol Delete -->
+    <form action="{{ route('simpan.destroy', $simpanan_item->id) }}" 
+          method="POST" 
+          style="display:inline-block;" 
+          onsubmit="return confirm('Yakin ingin menghapus data ini?');">
+        @csrf
+        @method('DELETE')
+        <button type="submit" 
+                class="btn btn-xs btn-danger btn-flat" 
+                title="Hapus">
+            <i class="fa fa-trash"></i>
+        </button>
+    </form>
+</td>
+
                             </tr>
                         @empty
                             {{-- <td colspan="5">Empty</td> --}}

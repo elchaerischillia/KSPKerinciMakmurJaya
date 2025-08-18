@@ -121,19 +121,21 @@
                                 @enderror
                             </div>
 
-                            <!-- Role -->
-                            <div class="form-group">
-                                <label for="role">ROLE <span class="text-red">*</span></label>
-                                <select class="form-control select2" name="role">
-                                    <option value="" disabled>-- PILIH ROLE --</option>
-                                    <option value="Manager" {{ old('role', $karyawan->role) == 'Manager' ? 'selected' : '' }}>Manager</option>
-                                    <option value="Teller" {{ old('role', $karyawan->role) == 'Teller' ? 'selected' : '' }}>Teller</option>
-                                    <option value="Collector" {{ old('role', $karyawan->role) == 'Collector' ? 'selected' : '' }}>Debt Collector</option>
-                                </select>
-                                @error('role')
-                                    <span class="help-block text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
+                          <!-- Role -->
+<div class="form-group">
+    <label for="role">ROLE <span class="text-red">*</span></label>
+    <select class="form-control select2" name="role">
+        <option value="" disabled>-- PILIH ROLE --</option>
+        <option value="Admin" {{ old('role', $karyawan->role) == 'Admin' ? 'selected' : '' }}>Admin</option>
+        <option value="Manager" {{ old('role', $karyawan->role) == 'Manager' ? 'selected' : '' }}>Manager</option>
+        <option value="Teller" {{ old('role', $karyawan->role) == 'Teller' ? 'selected' : '' }}>Teller</option>
+        <option value="Collector" {{ old('role', $karyawan->role) == 'Collector' ? 'selected' : '' }}>Debt Collector</option>
+    </select>
+    @error('role')
+        <span class="help-block text-danger">{{ $message }}</span>
+    @enderror
+</div>
+
                         </div>
 
                         <!-- Button -->

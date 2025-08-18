@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Backsite;
 use App\Http\Controllers\Controller;
 use App\Models\KategoriSimpan;
 use Illuminate\Http\Request;
+use App\Helpers\LogActivity;
+
 
 class KategoriSimpananController extends Controller
 {
@@ -40,6 +42,11 @@ class KategoriSimpananController extends Controller
         ]);
 
         KategoriSimpan::create($request->all());
+
+        //logaktivitas
+         $data = KategoriSimpanan::create($request->all());
+        LogActivity::addToLog('Tambah', 'KategoriSimpanan', 'Menambah kategori simpanan: ' . $data->nama);
+
         return redirect()->route('kategori-simpan.index')->with('success', 'Data Kategori Simpanan berhasil ditambahkan.');
     }
 
@@ -71,6 +78,12 @@ class KategoriSimpananController extends Controller
         $kategori_simpan = KategoriSimpan::findOrFail($id);
         $kategori_simpan->update($request->all());
 
+        //logaktivitas
+        $data = KategoriSimpanan::findOrFail($id);
+        $data->update($request->all());
+        LogActivity::addToLog('Edit', 'KategoriSimpanan', 'Mengubah kategori simpanan: ' . $data->nama);
+
+
         return redirect()->route('kategori-simpan.index')->with('success', 'Data Kategori Simpanan berhasil diperbarui.');
     }
 
@@ -81,6 +94,12 @@ class KategoriSimpananController extends Controller
     {
         $kategori_simpan = KategoriSimpan::findOrFail($id);
         $kategori_simpan->delete();
+
+        //logaktivitas
+         $data = KategoriSimpanan::findOrFail($id);
+        $data->delete();
+        LogActivity::addToLog('Hapus', 'KategoriSimpanan', 'Menghapus kategori simpanan: ' . $data->nama);
+
 
         return redirect()->route('kategori-simpan.index')->with('success', 'Data Kategori Simpanan berhasil dihapus.');
     }

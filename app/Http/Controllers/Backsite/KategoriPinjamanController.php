@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Backsite;
 use Illuminate\Http\Request;
 use App\Models\KategoriPinjaman;
 use App\Http\Controllers\Controller;
+use App\Helpers\LogActivity;
+
 
 class KategoriPinjamanController extends Controller
 {
@@ -42,6 +44,10 @@ class KategoriPinjamanController extends Controller
 
     KategoriPinjaman::create($request->only('nama_kategori', 'jumlah_pinjaman'));
 
+    //logaktivitas
+    $data = KategoriPinjaman::create($request->all());
+    LogActivity::addToLog('Tambah', 'KategoriPinjaman', 'Menambah kategori pinjaman: ' . $data->nama);
+
     return redirect()->route('kategori-pinjaman.index')->with('success', 'Data Kategori Pinjaman berhasil ditambahkan.');
 }
 
@@ -75,6 +81,12 @@ class KategoriPinjamanController extends Controller
     $kategori_pinjaman = KategoriPinjaman::findOrFail($id);
     $kategori_pinjaman->update($request->only('nama_kategori', 'jumlah_pinjaman'));
 
+    //logaktivitas
+    $data = KategoriPinjaman::findOrFail($id);
+    $data->update($request->all());
+
+    LogActivity::addToLog('Edit', 'KategoriPinjaman', 'Mengubah kategori pinjaman: ' . $data->nama);
+
     return redirect()->route('kategori-pinjaman.index')->with('success', 'Data Kategori Pinjaman berhasil diperbarui.');
 }
 
@@ -85,6 +97,13 @@ class KategoriPinjamanController extends Controller
     {
         $kategori_simpan = KategoriPinjaman::findOrFail($id);
         $kategori_simpan->delete();
+
+        //logaktivitas
+         $data = KategoriPinjaman::findOrFail($id);
+        $data->delete();
+
+        LogActivity::addToLog('Hapus', 'KategoriPinjaman', 'Menghapus kategori pinjaman: ' . $data->nama);
+
 
         return redirect()->route('kategori-pinjaman.index')->with('success', 'Data Kategori Pinjaman berhasil dihapus.');
     }

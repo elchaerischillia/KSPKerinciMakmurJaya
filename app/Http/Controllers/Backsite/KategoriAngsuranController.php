@@ -6,6 +6,7 @@ use App\Models\KategoriAngsuran;
 use Illuminate\Http\Request;
 use App\Models\KategoriPinjaman;
 use App\Http\Controllers\Controller;
+use App\Helpers\LogActivity;
 
 class KategoriAngsuranController extends Controller
 {
@@ -56,7 +57,9 @@ class KategoriAngsuranController extends Controller
         'nominal' => $nominal,
         'total_bayar' => $total_bayar,
     ]);
+    $data = KategoriAngsuran::create($request->all());
 
+    LogActivity::addToLog('Tambah', 'KategoriAngsuran', 'Menambah kategori angsuran: ' . $data->nama);
     return redirect()->route('kategori-angsuran.index')->with('success', 'Kategori Angsuran berhasil disimpan.');
 }
 
@@ -104,6 +107,12 @@ class KategoriAngsuranController extends Controller
             'nominal' => $request->nominal,
             'total_bayar' => $total_bayar,
         ]);
+        //logaktiviti
+        $data = KategoriAngsuran::findOrFail($id);
+    
+        $data->update($request->all());
+
+        LogActivity::addToLog('Edit', 'KategoriAngsuran', 'Mengubah kategori angsuran: ' . $data->nama);
 
         return redirect()->route('kategori-angsuran.index')->with('success', 'Data Kategori Angsuran berhasil diperbarui.');
     }
@@ -115,6 +124,13 @@ class KategoriAngsuranController extends Controller
     {
         $angsuran = KategoriAngsuran::findOrFail($id);
         $angsuran->delete();
+
+        //Log aktiviti
+        $data = KategoriAngsuran::findOrFail($id);
+         $data->delete();
+
+         LogActivity::addToLog('Hapus', 'KategoriAngsuran', 'Menghapus kategori angsuran: ' . $data->nama);
+
 
         return redirect()->route('kategori-angsuran.index')->with('success', 'Data Kategori Angsuran berhasil dihapus.');
     }

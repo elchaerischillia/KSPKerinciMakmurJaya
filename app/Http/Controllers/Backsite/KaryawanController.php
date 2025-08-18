@@ -120,7 +120,7 @@ class KaryawanController extends Controller
         'nama_lengkap'  => 'required|max:255',
         'username'      => 'required|string|max:20|unique:users,username,' . $id,
         'password'      => 'nullable|string|min:6',
-        'role'          => 'required|in:Manager,Teller,Collector',
+        'role'          => 'required|in:Admin,Manager,Teller,Collector',
         'foto'          => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         'tmpt_lahir'    => 'required|max:255',
         'tgl_lahir'     => 'required|date',

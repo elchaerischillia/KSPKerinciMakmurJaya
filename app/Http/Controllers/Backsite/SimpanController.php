@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\KategoriSimpan;
 use App\Models\TransaksiSimpan;
 use App\Http\Controllers\Controller;
+use App\Helpers\LogActivity;
 
 class SimpanController extends Controller
 {
@@ -40,56 +41,55 @@ class SimpanController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
+{
+    $request->merge(['saldo_simpanan' => str_replace(['Rp.', '.', ','], '', $request->saldo_simpanan)]);
 
-        $request->merge(['saldo_simpanan' => str_replace(['Rp.', '.', ','], '', $request->saldo_simpanan)]);
+    $request->validate([
+        'anggota_id' => 'required|exists:anggota,id',
+        'kategori_simpan_id' => 'required|exists:kategori_simpan,id',
+        'keterangan' => 'nullable|max:1000',
+        'saldo_simpanan' => 'required|integer',
+        'metode_pembayaran' => 'required|in:Cash,Transfer',
+    ]);
 
-        $request->validate([
-            'anggota_id' => 'required|exists:anggota,id',
-            'kategori_simpan_id' => 'required|exists:kategori_simpan,id',
-            'keterangan' => 'nullable|max:1000',
-            'saldo_simpanan' => 'required|integer',
-            'metode_pembayaran' => 'required|in:Cash,Transfer',
-        ], [
-            'required' => ':attribute harus diisi.',
-            'exists' => ':attribute harus ada di database.',
-            'unique' => ':attribute sudah ada di database.',
-            'max' => ':attribute maksimal :max karakter.',
-        ]);
+    // 🔥 Periksa dulu apakah anggota sudah punya kategori ini
+    $exists = Simpanan::where('anggota_id', $request->anggota_id)
+        ->where('kategori_simpan_id', $request->kategori_simpan_id)
+        ->exists();
 
-        // Periksa apakah anggota sudah memiliki kategori tersebut
-        $exists = Simpanan::where('anggota_id', $request->anggota_id)
-            ->where('kategori_simpan_id', $request->kategori_simpan_id)
-            ->exists();
-
-        if ($exists) {
-            return redirect()->back()->withErrors(['error' => 'Anggota sudah memiliki kategori simpanan ini.']);
-        }
-
-        $simpanan = Simpanan::create([
-            'user_id'               => auth()->id(),
-            'anggota_id'            => $request->anggota_id,
-            'kategori_simpan_id'    => $request->kategori_simpan_id,
-            'status'                => true,
-            'saldo_simpanan'        => $request->saldo_simpanan,
-        ]);
-
-        $saldoBaru = (int)$request->saldo_simpanan;
-
-        $transaksi_simpan = TransaksiSimpan::create([
-            'simpanan_id'       => $simpanan->id,
-            'kode_transaksi'    => $this->generateKodeTransaksi(),
-            'nominal'           => $saldoBaru,
-            'keterangan'        => $request->keterangan,
-            'metode_pembayaran' => $request->metode_pembayaran,
-            'jenis_transaksi'   => 'Simpan',
-            'saldo_akhir'       => $saldoBaru,
-            'user_id'           => auth()->id(),
-            'status'            => true,
-        ]);
-
-        return redirect()->route('simpan.index')->with('success', 'Data Anggota Simpan berhasil ditambahkan.');
+    if ($exists) {
+        return redirect()->back()->withErrors(['error' => 'Anggota sudah memiliki kategori simpanan ini.']);
     }
+
+    // Kalau belum ada → simpan data
+    $simpanan = Simpanan::create([
+        'user_id'            => auth()->id(),
+        'anggota_id'         => $request->anggota_id,
+        'kategori_simpan_id' => $request->kategori_simpan_id,
+        'status'             => true,
+        'saldo_simpanan'     => $request->saldo_simpanan,
+    ]);
+
+    // Tambah transaksi pertama
+    $saldoBaru = (int)$request->saldo_simpanan;
+
+    TransaksiSimpan::create([
+        'simpanan_id'       => $simpanan->id,
+        'kode_transaksi'    => $this->generateKodeTransaksi(),
+        'nominal'           => $saldoBaru,
+        'keterangan'        => $request->keterangan,
+        'metode_pembayaran' => $request->metode_pembayaran,
+        'jenis_transaksi'   => 'Simpan',
+        'saldo_akhir'       => $saldoBaru,
+        'user_id'           => auth()->id(),
+        'status'            => true,
+    ]);
+
+    // Logging
+    LogActivity::addToLog('Tambah', 'Simpanan', 'Menambah simpanan untuk anggota ID: ' . $simpanan->anggota_id);
+
+    return redirect()->route('simpan.index')->with('success', 'Data Anggota Simpan berhasil ditambahkan.');
+}
 
     /**
      * Display the specified resource.
@@ -138,6 +138,12 @@ class SimpanController extends Controller
             'max' => ':attribute maksimal :max karakter.',
         ]);
 
+        //logaktivitas
+         $data = Simpanan::findOrFail($id);
+        $data->update($request->all());
+
+        LogActivity::addToLog('Edit', 'Simpanan', 'Mengubah simpanan ID: ' . $data->id);
+
         // memeriksa apakah anggota tersebut sudah terdaftar di kategori tersebut
         $exists = Simpanan::where('anggota_id', $request->anggota_id)
             ->where('kategori_simpan_id', $request->kategori_simpan_id)
@@ -179,9 +185,15 @@ class SimpanController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
-    {
-        return abort(404);
-    }
+{
+    $simpanan = Simpanan::findOrFail($id);
+    $simpanan->delete();
+
+    LogActivity::addToLog('Hapus', 'Simpanan', 'Menghapus simpanan ID: ' . $simpanan->id);
+
+    return redirect()->route('simpan.index')->with('success', 'Data simpanan berhasil dihapus.');
+}
+
 
 
 

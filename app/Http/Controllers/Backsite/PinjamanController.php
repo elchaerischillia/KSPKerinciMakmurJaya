@@ -14,6 +14,7 @@ use App\Models\KategoriPinjaman;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\LogActivity;
 
 class PinjamanController extends Controller
 {
@@ -81,6 +82,11 @@ class PinjamanController extends Controller
             'status_pengajuan'    => 'Pending',
             'bukti_angunan' => $fotoPath
         ]);
+
+        //logaktivitas
+        $data = Pinjaman::create($request->all());
+        LogActivity::addToLog('Tambah', 'Pinjaman', 'Menambah pinjaman untuk anggota ID: ' . $data->anggota_id);
+
 
         return redirect()->route('pinjaman.index')->with('success', 'Data Pinjaman berhasil ditambahkan.');
     }
@@ -151,6 +157,12 @@ class PinjamanController extends Controller
             'status_pengajuan' => 'Pending', // Or set it as necessary
         ]);
 
+        //logaktivitas
+        $data = Pinjaman::findOrFail($id);
+        $data->update($request->all());
+        LogActivity::addToLog('Edit', 'Pinjaman', 'Mengubah pinjaman ID: ' . $data->id);
+
+
         // Redirect to the index page with success message
         return redirect()->route('pinjaman.index')->with('success', 'Data Pinjaman berhasil diperbarui.');
     }
@@ -162,6 +174,13 @@ class PinjamanController extends Controller
     {
         $pinjaman = Pinjaman::findOrFail($id);
         $pinjaman->forcedelete();
+
+        //LOGAKTIVITAS
+         $data = Pinjaman::findOrFail($id);
+         $data->delete();
+
+         LogActivity::addToLog('Hapus', 'Pinjaman', 'Menghapus pinjaman ID: ' . $data->id);
+
 
         return redirect()->route('pinjaman.index')->with('success', 'Data Pinjaman berhasil dihapus.');
     }
