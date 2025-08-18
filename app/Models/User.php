@@ -77,4 +77,23 @@ class User extends Authenticatable
     {
         return $this->hasMany(Pembayaran::class, 'user_id');
     }
+public function generateOtp()
+{
+    $otp = rand(100000, 999999);
+
+    $this->update([
+        'otp' => $otp,
+        'otp_expired_at' => now()->addMinutes(5),
+    ]);
+
+    return $otp;
+}
+
+// app/Models/User.php
+public function detail()
+{
+    return $this->hasOne(DetailUser::class, 'user_id');
+}
+
+
 }

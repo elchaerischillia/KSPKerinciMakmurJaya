@@ -100,20 +100,22 @@ class KaryawanController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit( $id)
     {
         $karyawan = User::with('detail_user')->findOrFail($id); // Mengambil data user beserta detail user
         return view('pages.karyawan.edit', compact('karyawan'));
     }
     
 
+
     /**
      * Update the specified resource in storage.
      */
-   public function update(Request $request, string $id)
+    public function update(Request $request, $id)
 {
     $karyawan = User::with('detail_user')->findOrFail($id);
 
+    // validasi input
     $request->validate([
         'nama_lengkap'  => 'required|max:255',
         'username'      => 'required|string|max:20|unique:users,username,' . $id,
@@ -123,41 +125,61 @@ class KaryawanController extends Controller
         'tmpt_lahir'    => 'required|max:255',
         'tgl_lahir'     => 'required|date',
         'jk'            => 'required|in:Laki-laki,Perempuan',
-        'no_hp'         => 'required|max:14|unique:detail_user,no_hp,' . $karyawan->detail_user->id,
+        'no_hp'         => [
+            'required',
+            'max:14',
+            \Illuminate\Validation\Rule::unique('detail_user', 'no_hp')
+                ->ignore(optional($karyawan->detail_user)->id),
+        ],
         'alamat'        => 'required|max:1000',
-        // 'status' => 'required|boolean', // hapus kalau tidak ada di form
     ]);
 
-    // Update foto
+    // update user
+    $karyawan->nama_lengkap = $request->nama_lengkap;
+    $karyawan->username     = $request->username;
+    if ($request->filled('password')) {
+        $karyawan->password = bcrypt($request->password);
+    }
+    $karyawan->role = $request->role;
+
+    // upload foto
     if ($request->hasFile('foto')) {
-        if ($karyawan->detail_user->foto && Storage::exists('public/' . $karyawan->detail_user->foto)) {
-            Storage::delete('public/' . $karyawan->detail_user->foto);
+        $file = $request->file('foto');
+        $filename = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('uploads/foto'), $filename);
+
+        // hapus foto lama jika ada
+        if ($karyawan->foto && file_exists(public_path('uploads/foto/' . $karyawan->foto))) {
+            unlink(public_path('uploads/foto/' . $karyawan->foto));
         }
-        $fotoPath = $request->file('foto')->store('assets/file-karyawan', 'public');
-        $karyawan->detail_user->foto = $fotoPath;
+
+        $karyawan->foto = $filename;
     }
 
-    // Update user
-    $karyawan->update([
-        'nama_lengkap' => $request->nama_lengkap,
-        'username'     => $request->username,
-        'password'     => $request->password ? Hash::make($request->password) : $karyawan->password,
-        'role'         => $request->role,
-    ]);
+    $karyawan->save();
 
-    // Update detail user
-    $karyawan->detail_user->update([
-        'tmpt_lahir' => $request->tmpt_lahir,
-        'tgl_lahir'  => $request->tgl_lahir,
-        'jk'         => $request->jk,
-        'no_hp'      => $request->no_hp,
-        'alamat'     => $request->alamat,
-        // 'status'   => $request->status ?? true,
-        'foto'       => $karyawan->detail_user->foto,
-    ]);
+    // update / buat detail_user
+    if ($karyawan->detail_user) {
+        $karyawan->detail_user->update([
+            'tmpt_lahir' => $request->tmpt_lahir,
+            'tgl_lahir'  => $request->tgl_lahir,
+            'jk'         => $request->jk,
+            'no_hp'      => $request->no_hp,
+            'alamat'     => $request->alamat,
+        ]);
+    } else {
+        $karyawan->detail_user()->create([
+            'tmpt_lahir' => $request->tmpt_lahir,
+            'tgl_lahir'  => $request->tgl_lahir,
+            'jk'         => $request->jk,
+            'no_hp'      => $request->no_hp,
+            'alamat'     => $request->alamat,
+        ]);
+    }
 
     return redirect()->route('karyawan.index')->with('success', 'Data karyawan berhasil diperbarui.');
 }
+
 
     /**
      * Remove the specified resource from storage.

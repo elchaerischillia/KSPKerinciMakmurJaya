@@ -21,6 +21,7 @@ use App\Http\Controllers\Backsite\KategoriAngsuranController;
 use App\Http\Controllers\Backsite\KategoriPinjamanController;
 use App\Http\Controllers\Backsite\KategoriSimpananController;
 use App\Http\Controllers\Backsite\AngsuranTerlambatWebController;
+use App\Http\Controllers\Auth\TwoFactorController;
 
 
 
@@ -135,8 +136,16 @@ Route::middleware(['auth'])->group(function () {
       Route::get('/laporan/angsuran/cetak-pdf', [LaporanController::class, 'cetakLaporanAngsuranPdf'])->name('laporan.angsuran.cetak-pdf');
 
 
-
-Route::post('/angsuran/{id}/notify', [AngsuranTerlambatWebController::class, 'notify'])
+    //Route untuk notif wa angsuran bermaslaah 
+    Route::post('/angsuran/{id}/notify', [AngsuranTerlambatWebController::class, 'notify'])
     ->name('angsuran.notify');
 
+    //verifikasi
+   
+
+    Route::get('/otp-verify', [TwoFactorController::class, 'VerifyForm'])->name('otp.verify');
+    Route::post('/otp-verify', [TwoFactorController::class, 'verifyOtp'])->name('otp.check');
+
+    // kalau mau fitur resend OTP
+    Route::post('/resend-otp', [TwoFactorController::class, 'resendOtp'])->name('resend.otp');
 }); 
